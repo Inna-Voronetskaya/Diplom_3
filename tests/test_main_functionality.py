@@ -1,7 +1,6 @@
 """Тесты основной функциональности."""
 
 import allure
-
 from urls import BASE_URL, ORDER_FEED_PATH
 
 
@@ -12,7 +11,8 @@ class TestMainFunctionality:
     def test_go_to_constructor(self, main_page):
         main_page.click_order_feed()
         main_page.click_constructor()
-        assert BASE_URL.rstrip("/") in main_page.get_current_url()
+        # Проверяем видимость элемента конструктора, а не просто URL
+        assert main_page.is_constructor_visible(), "Конструктор не отображается"
 
     @allure.title("Переход по клику на раздел «Лента заказов»")
     def test_go_to_order_feed(self, main_page):
@@ -32,5 +32,7 @@ class TestMainFunctionality:
 
     @allure.title("Счётчик ингредиента увеличивается при добавлении")
     def test_ingredient_counter_increases(self, main_page):
-        counter = main_page.get_ingredient_counter()
-        assert isinstance(counter, int)
+        counter_before = main_page.get_ingredient_counter()
+        main_page.drag_ingredient_to_basket()
+        counter_after = main_page.get_ingredient_counter()
+        assert counter_after > counter_before, "Счетчик ингредиента не увеличился"

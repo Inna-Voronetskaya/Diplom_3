@@ -1,6 +1,5 @@
 """Фикстуры для UI-тестов Stellar Burgers."""
 
-import uuid
 import requests
 import pytest
 from selenium import webdriver
@@ -13,6 +12,7 @@ from urls import BASE_URL, LOGIN_PATH
 from pages.main_page import MainPage
 from pages.order_feed_page import OrderFeedPage
 from pages.login_page import LoginPage
+from helpers.data_generator import generate_random_email
 
 
 @pytest.fixture(params=["chrome", "firefox"])
@@ -48,7 +48,8 @@ def login_page(driver):
 
 @pytest.fixture
 def authorized_user(driver, login_page):
-    email = f"test_{uuid.uuid4().hex[:8]}@yandex.ru"
+    """Создает пользователя через API и логинит в браузере."""
+    email = generate_random_email()
     password = "password123"
     name = "TestUser"
 

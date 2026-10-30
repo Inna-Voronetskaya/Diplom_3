@@ -17,9 +17,12 @@ class TestOrderFeed:
         main_page.get_order_number_from_modal()
 
         main_page.click_order_feed()
+        
+        # Явно ждем, пока счетчик увеличится
+        order_feed_page.wait_for_total_orders_counter_increase(initial_count)
+        
         new_count = order_feed_page.get_total_orders_count()
-
-        assert new_count > initial_count, "Счётчик 'Выполнено за всё время' не увеличился"
+        assert new_count > initial_count
 
     @allure.title("Счётчик «Выполнено за сегодня» увеличивается при создании заказа")
     def test_today_orders_counter_increases(self, driver, authorized_user, main_page, order_feed_page):
@@ -32,9 +35,12 @@ class TestOrderFeed:
         main_page.get_order_number_from_modal()
 
         main_page.click_order_feed()
+        
+        # Явно ждем, пока счетчик увеличится
+        order_feed_page.wait_for_today_orders_counter_increase(initial_count)
+        
         new_count = order_feed_page.get_today_orders_count()
-
-        assert new_count > initial_count, "Счётчик 'Выполнено за сегодня' не увеличился"
+        assert new_count > initial_count
 
     @allure.title("Номер заказа появляется в разделе «В работе»")
     def test_order_number_in_progress(self, driver, authorized_user, main_page, order_feed_page):
@@ -46,5 +52,7 @@ class TestOrderFeed:
 
         main_page.click_order_feed()
         
-        # Ждем появления нашего номера заказа на странице ленты
-        order_feed_page.wait_for_order_on_page(order_number)
+        order_feed_page.wait_for_order_in_progress(order_number)
+        
+        in_progress_orders = order_feed_page.get_in_progress_orders()
+        assert int(order_number) in [int(order) for order in in_progress_orders], f"Заказ {order_number} не найден в разделе 'В работе'"
